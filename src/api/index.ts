@@ -1,5 +1,6 @@
-import type { HydraContext } from '@/types/api'
-import type { User } from '@/types/user'
+import auth from './auth'
+import topic from './topic'
+import users from './users'
 
 const baseURL = 'http://localhost:8000/api'
 
@@ -13,7 +14,7 @@ export class instance {
     Accept: 'application/ld+json',
   }
 
-  fetch = (input: RequestInfo | URL, init: RequestInit = {}) => {
+  fetch = <T>(input: RequestInfo | URL, init: RequestInit = {}): Promise<T> => {
     init = Object.assign<object, RequestInit, RequestInit>({}, this.defaultParams, init)
 
     init.headers = Object.assign<object, Required<RequestInit>['headers'], RequestInit['headers']>(
@@ -23,44 +24,41 @@ export class instance {
     )
 
     return fetch(`${baseURL}${input}`, init)
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error(JSON.stringify(response.body))
+        }
+        return response
+      })
+      .then((data) => data.text())
+      .then((text) => (text.length ? JSON.parse(text) : text)) as unknown as Promise<T>
   }
 
-  post = (input: RequestInfo | URL, init: RequestInit = {}) => {
+  post = <T>(input: RequestInfo | URL, init: RequestInit = {}): Promise<T> => {
     init = Object.assign<RequestInit, RequestInit>(init, { method: 'POST' })
     return this.fetch(input, init)
   }
 
-  get = (input: RequestInfo | URL, init: RequestInit = {}) => this.fetch(input, init)
+  get = <T>(input: RequestInfo | URL, init: RequestInit = {}): Promise<T> =>
+    this.fetch<T>(input, init)
 
-  patch = (input: RequestInfo | URL, init: RequestInit = {}) => {
+  patch = <T>(input: RequestInfo | URL, init: RequestInit = {}): Promise<T> => {
     init = Object.assign<RequestInit, RequestInit>(init, { method: 'PATCH' })
     return this.fetch(input, init)
   }
 
-  delete = (input: RequestInfo | URL, init: RequestInit = {}) => {
+  delete = <T>(input: RequestInfo | URL, init: RequestInit = {}): Promise<T> => {
     init = Object.assign<RequestInit, RequestInit>(init, { method: 'DELETE' })
     return this.fetch(input, init)
   }
 }
 
-export const api = new instance()
+export const _api = new instance()
 
-export async function getUser(id: number): Promise<HydraContext<User>> {
-  const response = await api.fetch('/users/' + id).then((data) => data.json())
-  return response
-}
-
-export async function login(email: string, password: string): Promise<unknown> {
-  const response = await api.post('/auth', {
-    body: JSON.stringify({ email, password }),
-  })
-  return response
-}
-
-export function getCurrentUser(): Promise<HydraContext<User>> {
-  return api.get('/users/current').then((data) => data.json()) as unknown as Promise<
-    HydraContext<User>
-  >
+export default {
+  auth,
+  users,
+  topic,
 }
 
 // export async function getUser(id: number): Promise<HydraContext<User>> {
