@@ -10,3 +10,10 @@ export interface Collection<T> {
   view: object
   member: HydraContext<T>[]
 }
+
+export const defaultCollection = <T>(): Collection<T> => ({
+  totalItems: 0,
+  search: {},
+  view: {},
+  member: [],
+})

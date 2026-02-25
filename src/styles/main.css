@@ -14,8 +14,34 @@
   input[type='password'] {
     @apply size-4 h-8 w-full rounded border bg-white px-4 py-2 placeholder:text-slate-500;
   }
+
+  button {
+    --btn-bg-color: var(--color-secondary);
+    --btn-bg-color-hover: oklch(from var(--btn-bg-color) calc(l - 0.05) c h);
+    --btn-bg-color-active: oklch(from var(--btn-bg-color) calc(l - 0.01) c h);
+    @apply rounded bg-[var(--btn-bg-color)] px-2 py-1 text-white hover:bg-[var(--btn-bg-color-hover)] active:bg-[var(--btn-bg-color-active)];
+  }
+
+  button[variant='primary'] {
+    --btn-bg-color: var(--color-primary);
+  }
+  button[variant='danger'] {
+    --btn-bg-color: var(--color-danger);
+  }
+  button[variant='success'] {
+    --btn-bg-color: var(--color-success);
+  }
+
+  a {
+    @apply text-primary;
+  }
 }
 
 @theme {
   --color-border: var(--color-slate-400);
+
+  --color-primary: var(--color-blue-600);
+  --color-secondary: var(--color-slate-400);
+  --color-danger: var(--color-red-600);
+  --color-success: var(--color-emerald-600);
 }

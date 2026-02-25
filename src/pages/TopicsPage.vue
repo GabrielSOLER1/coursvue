@@ -15,7 +15,7 @@ const isLoading = ref(false)
 
 onMounted(async () => {
   isLoading.value = true
-  const fetchedTopics = await api.topic.getCollection().catch(() => [])
+  const fetchedTopics = await api.topics.getCollection().catch(() => [])
   Object.assign(topics, fetchedTopics)
   isLoading.value = false
 })
@@ -27,7 +27,7 @@ onMounted(async () => {
       <li v-for="topic in topics.member" :key="topic.id">
         <RouterLink
           class="mb-2 block rounded border p-4"
-          :to="{ name: 'topics.show', params: { id: topic.id } }"
+          :to="{ name: 'topics.show', params: { topicId: topic.id } }"
         >
           <span class="font-bold">{{ topic.title }}</span>
           <p class="text-slate-500">{{ topic.description }}</p>

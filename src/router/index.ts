@@ -1,6 +1,7 @@
 import HomePage from '@/pages/HomePage.vue'
 import LoginForm from '@/pages/LoginForm.vue'
-import TopicPage from '@/pages/TopicPage.vue'
+import PostPage from '@/pages/PostPage.vue'
+import TopicsPage from '@/pages/TopicsPage.vue'
 import TopicsShowPage from '@/pages/TopicsShowPage.vue'
 import { useAuthStore } from '@/stores/auth'
 import { createRouter, createWebHistory } from 'vue-router'
@@ -11,27 +12,42 @@ const router = createRouter({
     {
       path: '/',
       name: 'homepage',
-      component: () => HomePage,
+      component: HomePage,
       meta: { requiresAuth: true },
     },
     {
       path: '/login',
       name: 'login',
-      component: () => LoginForm,
+      component: LoginForm,
     },
     {
       path: '/topics',
+      meta: { requiresAuth: true },
       children: [
         {
           path: '',
           name: 'topics',
-          component: () => TopicPage,
+          component: TopicsPage,
         },
         {
-          path: '/:id(\\d+)',
-          name: 'topics.show',
-          component: () => TopicsShowPage,
-          props: true,
+          path: ':topicId(\\d+)',
+          children: [
+            {
+              path: '',
+              props: (route) => ({ topicId: Number.parseInt(route.params.topicId as string) }),
+              name: 'topics.show',
+              component: TopicsShowPage,
+            },
+            {
+              path: 'posts/:postId(\\d+)',
+              name: 'topics.posts.show',
+              props: (route) => ({
+                postId: Number.parseInt(route.params.postId as string),
+                topicId: Number.parseInt(route.params.topicId as string),
+              }),
+              component: PostPage,
+            },
+          ],
         },
       ],
     },

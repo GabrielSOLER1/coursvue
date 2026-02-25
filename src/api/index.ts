@@ -1,5 +1,7 @@
 import auth from './auth'
-import topic from './topic'
+import comments from './comments'
+import posts from './posts'
+import topics from './topic'
 import users from './users'
 
 const baseURL = 'http://localhost:8000/api'
@@ -57,8 +59,10 @@ export const _api = new instance()
 
 export default {
   auth,
+  comments,
   users,
-  topic,
+  topics,
+  posts,
 }
 
 // export async function getUser(id: number): Promise<HydraContext<User>> {
